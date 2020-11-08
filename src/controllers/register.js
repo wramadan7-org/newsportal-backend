@@ -1,7 +1,6 @@
 const { User } = require('../models')
 const joi = require('joi')
 const bcrypt = require('bcrypt')
-const user = require('../models/user')
 
 module.exports = {
   register: async (req, res) => {
@@ -15,32 +14,39 @@ module.exports = {
       const { value, error } = schema.validate(req.body)
       const { name, email, password } = value
 
-      const salt = bcrypt.genSaltSync(10)
-      const hash = bcrypt.hashSync(password, salt)
-
-      // check email
-      const checkEmail = await User.findAll({ where: { email: email } })
-      if (checkEmail.length > 0) {
+      if (error) {
         res.send({
           success: false,
-          message: 'Email already registerd'
+          message: `${error}`
         })
       } else {
-        const data = {
-          name, birthdate: '2000-01-01', email, password: hash, role: 'user', photo: ''
-        }
-        const registerd = await User.create(data)
-        if (registerd) {
-          res.send({
-            success: true,
-            message: 'Register successfully',
-            results: registerd
-          })
-        } else {
+        const salt = bcrypt.genSaltSync(10)
+        const hash = bcrypt.hashSync(password, salt)
+
+        // check email
+        const checkEmail = await User.findAll({ where: { email: email } })
+        if (checkEmail.length > 0) {
           res.send({
             success: false,
-            message: 'Register fail'
+            message: 'Email already registerd'
           })
+        } else {
+          const data = {
+            name, birthdate: '2000-01-01', email, password: hash, role: 'user', photo: ''
+          }
+          const registerd = await User.create(data)
+          if (registerd) {
+            res.send({
+              success: true,
+              message: 'Register successfully',
+              results: registerd
+            })
+          } else {
+            res.send({
+              success: false,
+              message: 'Register fail'
+            })
+          }
         }
       }
     } catch (err) {
