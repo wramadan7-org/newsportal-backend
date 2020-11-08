@@ -53,8 +53,8 @@ module.exports = {
 
   getCategory: async (req, res) => {
     const { search } = req.query
+    const searchValue = search || ''
     if (search) {
-      const searchValue = search || ''
       const searchCategory = await Category.findAll({ where: { category: { [Op.like]: `%${searchValue}%` } } })
       if (searchCategory.length) {
         res.send({
