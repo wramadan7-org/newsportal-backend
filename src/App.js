@@ -12,11 +12,15 @@ app.use(morgan('dev'))
 app.use(cors())
 
 // import routes
+const loginRoute = require('./routes/login')
+const registerRoute = require('./routes/register')
 const userRoute = require('./routes/users')
 const categoryRoute = require('./routes/categories')
 const newsRoute = require('./routes/news')
 
 // routing
+app.use('/login', loginRoute)
+app.use('/register', registerRoute)
 app.use('/users', userRoute)
 app.use('/category', categoryRoute)
 app.use('/news', newsRoute)

@@ -6,12 +6,12 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     //  const { id } = req.params
-    const { title } = req.body
+    const { name } = req.body
     const ext = file.originalname.split('.')[file.originalname.split('.').length - 1] // ambil type file (jpg/png)
     //  console.log('sassas', [file.originalname.split('.').length])
-    const filename = new Date().getTime().toString().concat(title.split(' ').join('-')).concat('.').concat(ext)
+    const filename = new Date().getTime().toString().concat(name.split(' ').join('-')).concat('.').concat(ext)
     cb(null, filename)
   }
 })
 
-module.exports = multer({ storage }).single('image') // image adalah key untuk upload multer
+module.exports = multer({ storage }).single('photo') // image adalah key untuk upload multer
