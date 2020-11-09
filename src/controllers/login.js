@@ -30,7 +30,7 @@ module.exports = {
               role: checkUser[0].role,
               photo: checkUser[0].photo
             }
-            const token = jwt.sign({ jwtToken }, process.env.APP_KEY)
+            const token = jwt.sign({ jwtToken }, process.env.APP_KEY, { expiresIn: '1d' })
             res.send({
               success: true,
               message: 'Login successfully',
