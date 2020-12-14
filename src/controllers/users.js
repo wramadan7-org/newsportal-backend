@@ -103,46 +103,46 @@ module.exports = {
 
   getUsers: async (req, res) => {
     try {
-      const { role } = req.user.jwtToken
-      if (role === 'admin') {
-        const { search } = req.query
-        // searching
-        if (search) {
-          const searchValue = search || ''
-          const results = await User.findAll({ where: { name: { [Op.like]: `%${searchValue}%` } } })
-          if (results.length) {
-            res.send({
-              success: true,
-              message: 'Your search data',
-              results
-            })
-          } else {
-            res.send({
-              success: false,
-              message: 'Data not found'
-            })
-          }
+      // const { role } = req.user.jwtToken
+      // if (role === 'admin') {
+      const { search } = req.query
+      // searching
+      if (search) {
+        const searchValue = search || ''
+        const results = await User.findAll({ where: { name: { [Op.like]: `%${searchValue}%` } } })
+        if (results.length) {
+          res.send({
+            success: true,
+            message: 'Your search data',
+            results
+          })
         } else {
-          const results = await User.findAll({ attributes: { exclude: ['password'] } })
-          if (results) {
-            res.send({
-              success: true,
-              message: 'All data users',
-              results
-            })
-          } else {
-            res.send({
-              success: false,
-              message: 'Fail to get all users'
-            })
-          }
+          res.send({
+            success: false,
+            message: 'Data not found'
+          })
         }
       } else {
-        res.send({
-          success: false,
-          message: 'You are not admin'
-        })
+        const results = await User.findAll({ attributes: { exclude: ['password'] } })
+        if (results) {
+          res.send({
+            success: true,
+            message: 'All data users',
+            results
+          })
+        } else {
+          res.send({
+            success: false,
+            message: 'Fail to get all users'
+          })
+        }
       }
+      // } else {
+      //   res.send({
+      //     success: false,
+      //     message: 'You are not admin'
+      //   })
+      // }
     } catch (err) {
       res.send({
         success: false,
@@ -312,13 +312,13 @@ module.exports = {
       // console.log(getUser[0].email)
       if (getUser.length) {
         const schema = joi.object({
-          name: joi.string().required(),
-          birthdate: joi.date().required(),
-          email: joi.string().email().required(),
-          password: joi.string().required()
+          name: joi.string(),
+          birthdate: joi.date(),
+          email: joi.string().email()
+          // password: joi.string()
         })
         const { value, error } = schema.validate(req.body)
-        const { name, birthdate, email, password } = value
+        const { name, birthdate, email } = value
 
         if (error) {
           res.send({
@@ -340,10 +340,10 @@ module.exports = {
               // cek apakah email inputan ada yg sama dengan id email lain
               const checkEmail = maps.some(item => item === email)
               if (checkEmail === false) {
-                const salt = bcrypt.genSaltSync(10)
-                const hash = bcrypt.hashSync(password, salt)
+                // const salt = bcrypt.genSaltSync(10)
+                // const hash = bcrypt.hashSync(password, salt)
                 const data = {
-                  name, birthdate, email, password: hash, role, photo: ''
+                  name, birthdate, email, role
                 }
                 const updateUser = await User.update(data, { where: { id } })
                 if (updateUser.length) {
@@ -382,10 +382,10 @@ module.exports = {
               // cek apakah email inputan ada yg sama dengan id email lain
               const checkEmail = maps.some(item => item === email)
               if (checkEmail === false) {
-                const salt = bcrypt.genSaltSync(10)
-                const hash = bcrypt.hashSync(password, salt)
+                // const salt = bcrypt.genSaltSync(10)
+                // const hash = bcrypt.hashSync(password, salt)
                 const data = {
-                  name, birthdate, email, password: hash, role, photo: photo
+                  name, birthdate, email, role, photo: photo
                 }
                 if (role === 'admin' || role === 'jurnalis' || role === 'user') {
                   const updateUser = await User.update(data, { where: { id } })
@@ -412,6 +412,60 @@ module.exports = {
               }
             }
           }
+        }
+      }
+    } catch (err) {
+      res.send({
+        success: false,
+        message: `${err}`
+      })
+    }
+  },
+
+  changePassword: async (req, res) => {
+    try {
+      const { id } = req.user.jwtToken
+      const schema = joi.object({
+        oldPassword: joi.string().required(),
+        newPassword: joi.string().required()
+      })
+      const { value, error } = schema.validate(req.body)
+      const { oldPassword, newPassword } = value
+      if (error) {
+        res.send({
+          success: false,
+          message: `${error}`
+        })
+      } else {
+        const checkAccount = await User.findAll({ where: { id } })
+        if (checkAccount.length > 0) {
+          const comparePassword = bcrypt.compareSync(oldPassword, checkAccount[0].password)
+          if (comparePassword) {
+            const salt = bcrypt.genSaltSync(10)
+            const hash = bcrypt.hashSync(newPassword, salt)
+            const updatePassword = await User.update({ password: hash }, { where: { id } })
+            if (updatePassword.length > 0) {
+              res.send({
+                success: true,
+                message: 'Password has been change'
+              })
+            } else {
+              res.send({
+                success: false,
+                message: 'Fail to change password'
+              })
+            }
+          } else {
+            res.send({
+              success: false,
+              message: 'Password invalid'
+            })
+          }
+        } else {
+          res.send({
+            success: false,
+            message: 'Account not found'
+          })
         }
       }
     } catch (err) {

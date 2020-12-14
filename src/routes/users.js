@@ -3,9 +3,10 @@ const uploads = require('../helpers/uploadsProfile')
 const auth = require('../middleware/auth')
 
 // import controller
-const { createUser, getUsers, getPersonal, updateUser, updatePersonal, deleteUser } = require('../controllers/users')
+const { createUser, getUsers, getPersonal, updateUser, updatePersonal, deleteUser, changePassword } = require('../controllers/users')
 
 // personal
+route.patch('/personal/changePassword', auth, changePassword)
 route.get('/personal', auth, getPersonal)
 route.patch('/personal', auth, uploads, updatePersonal)
 // admin

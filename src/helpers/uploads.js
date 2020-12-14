@@ -6,10 +6,10 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     //  const { id } = req.params
-    const { title } = req.body
+    const { id } = req.user.jwtToken
     const ext = file.originalname.split('.')[file.originalname.split('.').length - 1] // ambil type file (jpg/png)
     //  console.log('sassas', [file.originalname.split('.').length])
-    const filename = new Date().getTime().toString().concat(title.split(' ').join('-')).concat('.').concat(ext)
+    const filename = new Date().getTime().toString().concat(id).concat('.').concat(ext)
     cb(null, filename)
   }
 })
