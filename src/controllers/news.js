@@ -159,7 +159,15 @@ module.exports = {
   getDetailNews: async (req, res) => {
     try {
       const { id } = req.params
-      const getData = await News.findAll({ where: { id: id } })
+      const getData = await News.findAll({
+        where: { id: id },
+        include: [{
+          model: User,
+          attributes: {
+            exclude: ['password']
+          }
+        }]
+      })
       if (getData) {
         res.send({
           success: true,
