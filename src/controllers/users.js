@@ -307,7 +307,7 @@ module.exports = {
   updatePersonal: async (req, res) => {
     try {
       // const idFromJwt = req.user.jwtToken.id
-      const { id, role } = req.user.jwtToken
+      const { id } = req.user.jwtToken
       const getUser = await User.findAll({ where: { id } })
       // console.log(getUser[0].email)
       if (getUser.length) {
@@ -343,7 +343,7 @@ module.exports = {
                 // const salt = bcrypt.genSaltSync(10)
                 // const hash = bcrypt.hashSync(password, salt)
                 const data = {
-                  name, birthdate, email, role
+                  name, birthdate, email
                 }
                 const updateUser = await User.update(data, { where: { id } })
                 if (updateUser.length) {
@@ -385,23 +385,17 @@ module.exports = {
                 // const salt = bcrypt.genSaltSync(10)
                 // const hash = bcrypt.hashSync(password, salt)
                 const data = {
-                  name, birthdate, email, role, photo: photo
+                  name, birthdate, email, photo: photo
                 }
-                if (role === 'admin' || role === 'jurnalis' || role === 'user') {
-                  const updateUser = await User.update(data, { where: { id } })
-                  if (updateUser.length) {
-                    // ambil data setelah diupdate
-                    const getUserAfterUpdate = await User.findAll({ where: { id } })
-                    res.send({
-                      success: true,
-                      message: 'Updated successfully',
-                      results: getUserAfterUpdate[0]
-                    })
-                  }
-                } else {
+
+                const updateUser = await User.update(data, { where: { id } })
+                if (updateUser.length) {
+                  // ambil data setelah diupdate
+                  const getUserAfterUpdate = await User.findAll({ where: { id } })
                   res.send({
-                    success: false,
-                    message: 'Role does not match'
+                    success: true,
+                    message: 'Updated successfully',
+                    results: getUserAfterUpdate[0]
                   })
                 }
               } else {

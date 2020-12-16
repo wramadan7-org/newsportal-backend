@@ -88,6 +88,83 @@ module.exports = {
     }
   },
 
+  getPersonalNews: async (req, res) => {
+    try {
+      const { id } = req.user.jwtToken
+      const { search } = req.query
+      const searchValue = search || ''
+      if (search) {
+        const searchNews = await News.findAll({
+          where: {
+            [Op.and]: [
+              {
+                title: {
+                  [Op.like]: `%${searchValue}%`
+                }
+              },
+              {
+                author_id: id
+              }
+            ]
+          },
+          include: [
+            {
+              model: User
+            }
+          ],
+          order: [
+            ['createdAt', 'DESC']
+          ]
+        })
+        if (searchNews.length) {
+          res.send({
+            success: true,
+            message: 'Your search',
+            results: searchNews
+          })
+        } else {
+          res.send({
+            success: false,
+            message: 'Data not found'
+          })
+        }
+      } else {
+        const getAllNews = await News.findAll({
+          where: { author_id: id },
+          include: [
+            {
+              model: User,
+              attributes: {
+                exclude: ['password']
+              }
+            }
+          ],
+          order: [
+            ['createdAt', 'DESC']
+          ]
+        })
+        console.log(getAllNews.length)
+        if (getAllNews.length) {
+          res.send({
+            success: true,
+            message: 'Your news',
+            results: getAllNews
+          })
+        } else {
+          res.send({
+            success: false,
+            message: 'Dont have news'
+          })
+        }
+      }
+    } catch (err) {
+      res.send({
+        success: false,
+        message: `${err}`
+      })
+    }
+  },
+
   getNews: async (req, res) => {
     try {
       const { search } = req.query

@@ -32,7 +32,7 @@ module.exports = {
           })
         } else {
           const data = {
-            name, birthdate: '2000-01-01', email, password: hash, photo: ''
+            name, birthdate: '2000-01-01', email, password: hash
           }
           const registerd = await User.create(data)
           if (registerd) {
