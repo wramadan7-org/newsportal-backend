@@ -16,7 +16,7 @@ route.post('/', auth, uploads, createNews)
 route.get('/personal', auth, getPersonalNews)
 route.patch('/:id', auth, uploads, updateNews)
 route.delete('/:id', auth, deleteNews)
-route.get('/', getNews)
-route.get('/:id', getDetailNews)
+route.get('/', auth, getNews)
+route.get('/:id', auth, getDetailNews)
 
 module.exports = route
