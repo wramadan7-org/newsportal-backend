@@ -1,21 +1,21 @@
 {
   "development": {
     "username": "root",
-    "password": "rama2000",
+    "password": "Sebis@168",
     "database": "newsportal_development",
     "host": "localhost",
     "dialect": "mysql"
   },
   "test": {
     "username": "root",
-    "password": "rama2000",
+    "password": "Sebis@168",
     "database": "newsportal_test",
     "host": "localhost",
     "dialect": "mysql"
   },
   "production": {
     "username": "root",
-    "password": "rama2000",
+    "password": "Sebis@168",
     "database": "newsportal_production",
     "host": "localhost",
     "dialect": "mysql"
